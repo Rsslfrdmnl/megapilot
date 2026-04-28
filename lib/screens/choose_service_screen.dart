@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/order_provider.dart';
 
 class ChooseServiceScreen extends StatelessWidget {
   const ChooseServiceScreen({super.key});
@@ -52,21 +55,30 @@ class ChooseServiceScreen extends StatelessWidget {
                       _ServiceButton(
                         title: "PILOT",
                         width: buttonWidth,
-                        onTap: () => context.push('/order-form', extra: 'Pilot'),
+                        onTap: () {
+                          Provider.of<OrderProvider>(context, listen: false).selectService("Pilot");
+                          context.push('/order-form', extra: 'Pilot');
+                        },
                       ),
                       const SizedBox(height: 20),
 
                       _ServiceButton(
                         title: "BOOST",
                         width: buttonWidth,
-                        onTap: () => context.push('/order-form', extra: 'Boost'),
+                        onTap: () {
+                          Provider.of<OrderProvider>(context, listen: false).selectService("Boost");
+                          context.push('/order-form', extra: 'Boost');
+                        },
                       ),
                       const SizedBox(height: 20),
 
                       _ServiceButton(
                         title: "COACH",
                         width: buttonWidth,
-                        onTap: () => context.push('/order-form', extra: 'Coach'),
+                        onTap: () {
+                          Provider.of<OrderProvider>(context, listen: false).selectService("Coach");
+                          context.push('/order-form', extra: 'Coach');
+                        },
                       ),
 
                       SizedBox(height: isMobile ? 80 : 140),

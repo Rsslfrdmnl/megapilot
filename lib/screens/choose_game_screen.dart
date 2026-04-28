@@ -4,6 +4,9 @@ import 'package:video_player/video_player.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/order_provider.dart';
 
 class ChooseGameScreen extends StatefulWidget {
   const ChooseGameScreen({super.key});
@@ -127,78 +130,43 @@ class _ChooseGameScreenState extends State<ChooseGameScreen> {
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: isMobile 
-                      ? Wrap(
-                          alignment: WrapAlignment.center,
-                          spacing: 24,
-                          runSpacing: 24,
-                          children: [
-                            _buildGameCard(
-                              keyName: 'wildrift',
-                              imageUrl: "https://firebasestorage.googleapis.com/v0/b/megapilot-ffe50.firebasestorage.app/o/images%2Fwildrift.jpg?alt=media&token=01fca6d0-dd0c-4f8c-b86f-f7443b4de579",
-                              title: "League of Legends\nWild Rift",
-                              isActive: true,
-                              cardWidth: (MediaQuery.of(context).size.width - 72) / 2,
-                            ),
-                            _buildGameCard(
-                              keyName: 'mobile_legends',
-                              imageUrl: "https://firebasestorage.googleapis.com/v0/b/megapilot-ffe50.firebasestorage.app/o/images%2Fmobile_legends.jpg?alt=media&token=64172c85-72c5-415f-be6f-da6d9059c413",
-                              title: "Mobile Legends",
-                              isActive: false,
-                              cardWidth: (MediaQuery.of(context).size.width - 72) / 2,
-                            ),
-                            _buildGameCard(
-                              keyName: 'hok',
-                              imageUrl: "https://firebasestorage.googleapis.com/v0/b/megapilot-ffe50.firebasestorage.app/o/images%2Fhonor_of_kings.png?alt=media&token=f6746c34-3e9b-4021-b7f1-5676ec3bc87e",
-                              title: "Honor of Kings",
-                              isActive: false,
-                              cardWidth: (MediaQuery.of(context).size.width - 72) / 2,
-                            ),
-                            _buildGameCard(
-                              keyName: 'valorant',
-                              imageUrl: "https://firebasestorage.googleapis.com/v0/b/megapilot-ffe50.firebasestorage.app/o/images%2Fvalorant.jpg?alt=media&token=89302108-ac38-49cd-ad95-3f05099f6fd0",
-                              title: "Valorant",
-                              isActive: false,
-                              cardWidth: (MediaQuery.of(context).size.width - 72) / 2,
-                            ),
-                          ],
-                        )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _buildGameCard(
-                              keyName: 'wildrift',
-                              imageUrl: "https://firebasestorage.googleapis.com/v0/b/megapilot-ffe50.firebasestorage.app/o/images%2Fwildrift.jpg?alt=media&token=01fca6d0-dd0c-4f8c-b86f-f7443b4de579",
-                              title: "League of Legends\nWild Rift",
-                              isActive: true,
-                              cardWidth: 230,
-                            ),
-                            const SizedBox(width: 28),
-                            _buildGameCard(
-                              keyName: 'mobile_legends',
-                              imageUrl: "https://firebasestorage.googleapis.com/v0/b/megapilot-ffe50.firebasestorage.app/o/images%2Fmobile_legends.jpg?alt=media&token=64172c85-72c5-415f-be6f-da6d9059c413",
-                              title: "Mobile Legends",
-                              isActive: false,
-                              cardWidth: 230,
-                            ),
-                            const SizedBox(width: 28),
-                            _buildGameCard(
-                              keyName: 'hok',
-                              imageUrl: "https://firebasestorage.googleapis.com/v0/b/megapilot-ffe50.firebasestorage.app/o/images%2Fhonor_of_kings.png?alt=media&token=f6746c34-3e9b-4021-b7f1-5676ec3bc87e",
-                              title: "Honor of Kings",
-                              isActive: false,
-                              cardWidth: 230,
-                            ),
-                            const SizedBox(width: 28),
-                            _buildGameCard(
-                              keyName: 'valorant',
-                              imageUrl: "https://firebasestorage.googleapis.com/v0/b/megapilot-ffe50.firebasestorage.app/o/images%2Fvalorant.jpg?alt=media&token=89302108-ac38-49cd-ad95-3f05099f6fd0",
-                              title: "Valorant",
-                              isActive: false,
-                              cardWidth: 230,
-                            ),
-                          ],
-                        ),
+                    child: Center(
+                      child: Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: 28,
+                        runSpacing: 28,
+                        children: [
+                          _buildGameCard(
+                            keyName: 'wildrift',
+                            imageUrl: "https://firebasestorage.googleapis.com/v0/b/megapilot-ffe50.firebasestorage.app/o/images%2Fwildrift.jpg?alt=media&token=01fca6d0-dd0c-4f8c-b86f-f7443b4de579",
+                            title: "League of Legends\nWild Rift",
+                            isActive: true,
+                            cardWidth: isMobile ? (screenWidth - 72) / 2 : 230,
+                          ),
+                          _buildGameCard(
+                            keyName: 'mobile_legends',
+                            imageUrl: "https://firebasestorage.googleapis.com/v0/b/megapilot-ffe50.firebasestorage.app/o/images%2Fmobile_legends.jpg?alt=media&token=64172c85-72c5-415f-be6f-da6d9059c413",
+                            title: "Mobile Legends",
+                            isActive: false,
+                            cardWidth: isMobile ? (screenWidth - 72) / 2 : 230,
+                          ),
+                          _buildGameCard(
+                            keyName: 'hok',
+                            imageUrl: "https://firebasestorage.googleapis.com/v0/b/megapilot-ffe50.firebasestorage.app/o/images%2Fhonor_of_kings.png?alt=media&token=f6746c34-3e9b-4021-b7f1-5676ec3bc87e",
+                            title: "Honor of Kings",
+                            isActive: false,
+                            cardWidth: isMobile ? (screenWidth - 72) / 2 : 230,
+                          ),
+                          _buildGameCard(
+                            keyName: 'valorant',
+                            imageUrl: "https://firebasestorage.googleapis.com/v0/b/megapilot-ffe50.firebasestorage.app/o/images%2Fvalorant.jpg?alt=media&token=89302108-ac38-49cd-ad95-3f05099f6fd0",
+                            title: "Valorant",
+                            isActive: false,
+                            cardWidth: isMobile ? (screenWidth - 72) / 2 : 230,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
 
@@ -219,104 +187,108 @@ class _ChooseGameScreenState extends State<ChooseGameScreen> {
   }
 
   Widget _buildGameCard({
-    required String keyName,
-    required String imageUrl,
-    required String title,
-    required bool isActive,
-    required double cardWidth,
-  }) {
-    final bool isHovered = _currentHoverGame == keyName;
+  required String keyName,
+  required String imageUrl,
+  required String title,
+  required bool isActive,
+  required double cardWidth,
+}) {
+  final bool isHovered = _currentHoverGame == keyName;
 
-    return MouseRegion(
-      onEnter: (_) => _onHover(keyName, true),
-      onExit: (_) => _onHover(keyName, false),
-      hitTestBehavior: HitTestBehavior.opaque,
-      cursor: isActive ? SystemMouseCursors.click : SystemMouseCursors.basic,
-      child: GestureDetector(
-        onTap: isActive ? () {
-          context.push('/choose-service');
-        } : null,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 280),
-          transform: Matrix4.identity()..scale(isHovered ? 1.06 : 1.0),
-          child: Container(
-            width: cardWidth,
-            height: cardWidth * 1.48, // Maintain aspect ratio
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: isHovered
-                  ? [BoxShadow(color: isActive ? Colors.cyan.withOpacity(0.75) : Colors.white24, blurRadius: 35, spreadRadius: 6)]
-                  : null,
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(24),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  CachedNetworkImage(
-                    imageUrl: imageUrl,
-                    fit: BoxFit.cover,
-                    color: isActive ? null : Colors.grey[700],
-                    colorBlendMode: isActive ? null : BlendMode.saturation,
-                  ),
-                  if (!isActive)
-                    Container(
-                      color: Colors.black.withOpacity(0.78),
-                      child: const Center(
-                        child: Text(
-                          "COMING SOON",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 3,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.fromLTRB(16, 40, 16, 20),
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [Colors.transparent, Colors.black87],
-                        ),
-                      ),
+  return MouseRegion(
+    onEnter: (_) => _onHover(keyName, true),
+    onExit: (_) => _onHover(keyName, false),
+    hitTestBehavior: HitTestBehavior.opaque,
+    cursor: isActive ? SystemMouseCursors.click : SystemMouseCursors.basic,
+    child: GestureDetector(
+      onTap: isActive ? () {
+        // Save selected game using Provider
+        final provider = Provider.of<OrderProvider>(context, listen: false);
+        provider.selectGame("Wild Rift");
+
+        context.push('/choose-service');
+      } : null,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 280),
+        transform: Matrix4.identity()..scale(isHovered ? 1.06 : 1.0),
+        child: Container(
+          width: cardWidth,
+          height: cardWidth * 1.48,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: isHovered
+                ? [BoxShadow(color: isActive ? Colors.cyan.withOpacity(0.75) : Colors.white24, blurRadius: 35, spreadRadius: 6)]
+                : null,
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(24),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                CachedNetworkImage(
+                  imageUrl: imageUrl,
+                  fit: BoxFit.cover,
+                  color: isActive ? null : Colors.grey[700],
+                  colorBlendMode: isActive ? null : BlendMode.saturation,
+                ),
+                if (!isActive)
+                  Container(
+                    color: Colors.black.withOpacity(0.78),
+                    child: const Center(
                       child: Text(
-                        title,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
+                        "COMING SOON",
+                        style: TextStyle(
                           color: Colors.white,
-                          fontSize: 16.5,
-                          fontWeight: FontWeight.w700,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 3,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(16, 40, 16, 20),
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Colors.transparent, Colors.black87],
+                      ),
+                    ),
+                    child: Text(
+                      title,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16.5,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+                if (isHovered)
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: isActive ? Colors.cyan : Colors.white70,
+                          width: 3.5,
                         ),
                       ),
                     ),
                   ),
-                  if (isHovered)
-                    Positioned.fill(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24),
-                          border: Border.all(
-                            color: isActive ? Colors.cyan : Colors.white70,
-                            width: 3.5,
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
+              ],
             ),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

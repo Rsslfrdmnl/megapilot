@@ -1,1 +1,16 @@
-{"flutter":{"platforms":{"dart":{"lib/firebase_options.dart":{"projectId":"megapilot-ffe50","configurations":{"web":"1:645803147472:web:8f91c3d89ff90af2d51ed5"}}}}}}
+{
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

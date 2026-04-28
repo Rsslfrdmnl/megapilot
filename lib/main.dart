@@ -3,12 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
+
+import 'providers/order_provider.dart';
+
 import 'screens/intro_screen.dart';
 import 'screens/choose_game_screen.dart';
 import 'screens/choose_service_screen.dart';
 import 'screens/order_form_screen.dart';
 import 'screens/payment_screen.dart';
+import 'screens/final_submission_screen.dart';
+import 'screens/thank_you_screen.dart';
+import 'screens/admin_screen.dart';
+import 'screens/admin_login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +25,12 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(const MegapilotApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => OrderProvider(),
+      child: const MegapilotApp(),
+    ),
+  );
 }
 
 class MegapilotApp extends StatelessWidget {
@@ -41,11 +54,17 @@ final _router = GoRouter(
   initialLocation: '/',
   routes: [
     GoRoute(path: '/', builder: (context, state) => const IntroScreen()),
-    GoRoute(path: '/choose-game', builder: (context, state) => const ChooseGameScreen()),
+    
+    GoRoute(
+      path: '/choose-game',
+      builder: (context, state) => const ChooseGameScreen(),
+    ),
+    
     GoRoute(
       path: '/choose-service',
       builder: (context, state) => const ChooseServiceScreen(),
     ),
+    
     GoRoute(
       path: '/order-form',
       builder: (context, state) {
@@ -53,23 +72,29 @@ final _router = GoRouter(
         return OrderFormScreen(serviceType: serviceType);
       },
     ),
-    // NEW ROUTE
+    
     GoRoute(
       path: '/payment',
-      builder: (context, state) {
-        final extra = state.extra as Map<String, dynamic>? ?? {};
-        return PaymentScreen(
-          serviceType: extra['serviceType'] as String? ?? 'Pilot',
-          totalAmount: extra['totalAmount'] as int? ?? 0,
-          currentDivision: extra['currentDivision'] as String?,
-          currentTier: extra['currentTier'] as String?,
-          currentMarks: extra['currentMarks'] as int?,
-          targetDivision: extra['targetDivision'] as String?,
-          targetTier: extra['targetTier'] as String?,
-          targetMarks: extra['targetMarks'] as int?,
-          hours: extra['hours'] as int?,
-        );
-      },
+      builder: (context, state) => const PaymentScreen(),
+    ),
+    
+    GoRoute(
+      path: '/final-submission',
+      builder: (context, state) => const FinalSubmissionScreen(),
+    ),
+    
+    GoRoute(
+      path: '/thank-you',
+      builder: (context, state) => const ThankYouScreen(),
+    ),
+
+    GoRoute(
+      path: '/admin-login',
+      builder: (context, state) => const AdminLoginScreen(),
+    ),
+    GoRoute(
+      path: '/admin',
+      builder: (context, state) => const AdminScreen(),
     ),
   ],
 );

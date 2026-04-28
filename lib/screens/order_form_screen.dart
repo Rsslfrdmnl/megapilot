@@ -1,7 +1,11 @@
+// lib/screens/order_form_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/order_provider.dart';
 
 class OrderFormScreen extends StatefulWidget {
   final String serviceType;
@@ -34,11 +38,7 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
   int? receiptHours;
   int receiptTotal = 0;
 
-  final List<String> divisions = [
-    'Iron', 'Bronze', 'Silver', 'Gold', 'Platinum', 
-    'Emerald', 'Diamond', 'Master', 'Grandmaster', 'Challenger', 'Sovereign'
-  ];
-
+  final List<String> divisions = ['Iron', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Emerald', 'Diamond', 'Master', 'Grandmaster', 'Challenger', 'Sovereign'];
   final List<String> tiers = ['IV', 'III', 'II', 'I'];
 
   final Map<String, String> rankImageUrls = {
@@ -57,10 +57,10 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
 
 // ==================== FIXED CALCULATION LOGIC + RECEIPT SAVING ====================
 int _calculatedAmount() {
-
-  if (widget.serviceType == 'Coach') {
-    if (currentDivision == null || hours == null || hours! < 1) {
-      return 0;
+    if (widget.serviceType == 'Coach') {
+      if (currentDivision == null || hours == null || hours! < 1) {
+        _showError("Please select rank and enter hours (1-3)");
+        return 0;
     }
     final total = (coachRatePerHour[currentDivision] ?? 150) * hours!;
 
@@ -72,9 +72,9 @@ int _calculatedAmount() {
   }
 
   // === BOOST MODE ===
-  if (currentDivision == null || targetDivision == null || 
-      currentMarks == null || targetMarks == null) {
-    return 0;
+  if (currentDivision == null || targetDivision == null || currentMarks == null || targetMarks == null) {
+      _showError("Please fill all rank fields");
+      return 0;
   }
 
   int startIndex = divisions.indexOf(currentDivision!);
@@ -202,10 +202,22 @@ if (startIndex == endIndex) {
     receiptTargetMarks = targetMarks;
     receiptHours = hours;
     receiptTotal = finalTotal;
-  }
+  } else {
+      _showError("Invalid rank selection. Please check current and target ranks.");
+    }
 
   return finalTotal;
 }
+
+void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
 
 // Helper: Marks needed to complete one full tier/division
 int _getMarksPerTierForBoost(String division) {
@@ -237,11 +249,11 @@ int _getMarksPerTierForBoost(String division) {
     'Master': 500, 'Grandmaster': 500, 'Challenger': 600, 'Sovereign': 600,
   };
 
-    @override
+@override
   Widget build(BuildContext context) {
+    final provider = Provider.of<OrderProvider>(context, listen: false);
     final bool isCoach = widget.serviceType == 'Coach';
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final bool isMobile = screenWidth < 600;
+    final bool isMobile = MediaQuery.of(context).size.width < 600;
 
     return Scaffold(
       body: Container(
@@ -256,26 +268,19 @@ int _getMarksPerTierForBoost(String division) {
           child: Stack(
             children: [
               SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),  // Updated
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
                 child: Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 580),
                     child: Column(
                       children: [
-                        const SizedBox(height: 8),  // Updated
-
+                        const SizedBox(height: 8),
                         Text(
                           isCoach ? "COACHING SESSION" : "FILL UP THE FOLLOWING",
-                          style: const TextStyle(
-                            fontSize: 38,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.white,
-                            letterSpacing: 1.5,
-                          ),
-                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 38, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1.5),
                         ).animate().fadeIn(duration: 800.ms).slideY(begin: -0.4, end: 0),
 
-                        const SizedBox(height: 24),  // Updated
+                        const SizedBox(height: 24),
 
                         // Main Form Card
                         Container(
@@ -429,51 +434,40 @@ int _getMarksPerTierForBoost(String division) {
 
                         // Proceed to Payment Button
                         ElevatedButton(
-  onPressed: displayedTotal > 0
-      ? () {
-          context.push('/payment', extra: {
-            'serviceType': widget.serviceType,
-            'totalAmount': displayedTotal,
-            'currentDivision': receiptCurrentDivision,
-            'currentTier': receiptCurrentTier,
-            'currentMarks': receiptCurrentMarks,
-            'targetDivision': receiptTargetDivision,
-            'targetTier': receiptTargetTier,
-            'targetMarks': receiptTargetMarks,
-            'hours': receiptHours,
-          });
-        }
-      : null,
-  style: ElevatedButton.styleFrom(
-    backgroundColor: Colors.cyan,
-    foregroundColor: Colors.black,
-    padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 16),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(16),
-    ),
-  ),
-  child: const Text(
-    "PROCEED TO PAYMENT",
-    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-  ),
-),
+                          onPressed: displayedTotal > 0
+                              ? () {
+                                  provider.updateRankDetails(
+                                    currDiv: receiptCurrentDivision,
+                                    currTier: receiptCurrentTier,
+                                    currMarks: receiptCurrentMarks,
+                                    targDiv: receiptTargetDivision,
+                                    targTier: receiptTargetTier,
+                                    targMarks: receiptTargetMarks,
+                                    hrs: receiptHours,
+                                    total: receiptTotal,
+                                  );
+                                  context.push('/payment');
+                                }
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.cyan,
+                            foregroundColor: Colors.black,
+                            padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 16),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          ),
+                          child: const Text(
+                            "PROCEED TO PAYMENT",
+                            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 ),
               ),
 
-              // Navigation Buttons (unchanged)
-              Positioned(
-                top: 20,
-                left: 20,
-                child: _buildNavButton(icon: Icons.arrow_back_ios_new, onTap: () => context.pop()),
-              ),
-              Positioned(
-                top: 20,
-                right: 20,
-                child: _buildNavButton(icon: Icons.home, onTap: () => context.go('/choose-game')),
-              ),
+              Positioned(top: 20, left: 20, child: _buildNavButton(icon: Icons.arrow_back_ios_new, onTap: () => context.pop())),
+              Positioned(top: 20, right: 20, child: _buildNavButton(icon: Icons.home, onTap: () => context.go('/choose-game'))),
             ],
           ),
         ),
